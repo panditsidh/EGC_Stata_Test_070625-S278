@@ -1,5 +1,29 @@
-\documentclass{article}
-\usepackage{graphicx} % Required for inserting images
+\documentclass[12pt]{article}
+\usepackage{graphicx} %package to manage images
+\graphicspath{ {./figures/} }
+\usepackage{caption}
+\usepackage[font=scriptsize]{subcaption}
+\captionsetup[figure]{labelsep=none}
+\captionsetup[table]{labelsep=none}
+\usepackage{bbm}
+\usepackage{amsmath}
+\usepackage{import}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{afterpage}
+\usepackage{floatrow}
+\usepackage{pdflscape}
+\usepackage{soul}
+\usepackage{float}
+\usepackage{adjustbox}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{afterpage}
+\usepackage[margin=1in]{geometry}
+\usepackage[round]{natbib}
+\usepackage{hyperref}
+\usepackage{titlesec}
 
 \title{EGC Stata Test 070625 S278}
 \author{Sidh Pandit}
@@ -9,7 +33,14 @@
 
 \maketitle
 
-
+\begin{table}[H]
+    \centering
+    \scriptsize % shrink text
+    \caption{: OLS regressions predicting pregnancy with covariates that also predict underweight}
+    \setlength{\tabcolsep}{1pt}
+    \renewcommand{\arraystretch}{0.81}
+    {\input{tables/table01_summary}}
+\end{table}
 
 
 
