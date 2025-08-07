@@ -36,11 +36,30 @@
 \begin{table}[H]
     \centering
     \scriptsize % shrink text
-    \caption{: OLS regressions predicting pregnancy with covariates that also predict underweight}
-    \setlength{\tabcolsep}{1pt}
-    \renewcommand{\arraystretch}{0.81}
-    {\input{tables/table01_summary}}
+    \setlength{\tabcolsep}{2pt}
+    \renewcommand{\arraystretch}{2}
+    \resizebox{\textwidth}{!}{\input{tables/table01_summary}}
+    \caption{: Endline raw data summary statistics}
 \end{table}
+
+
+The average per-capita income for households in the sample is \$1.02 a day, which is extreme poverty at the international level. 
+
+There seems to be stark inequality, as for both per-capita and total household income in the last 30 days, the median is almost half of the mean, suggesting a right skewed distribution.
+
+
+There are large outliers, as seen in the 99th percentile and max values.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/.png}
+    \caption{: CIs of pre-pregnancy underweight by social group}
+\end{figure}
+
+
+
+
 
 
 
