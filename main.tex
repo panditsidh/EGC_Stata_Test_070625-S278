@@ -33,6 +33,9 @@
 
 \maketitle
 
+
+\subsection{part c}
+
 \begin{table}[H]
     \centering
     \scriptsize % shrink text
@@ -43,21 +46,22 @@
 \end{table}
 
 
-The average per-capita income for households in the sample is \$1.02 a day, which is extreme poverty at the international level. 
+The average per-capita income for households in the sample is \$1.02 a day, which is well below the international extreme poverty threshold. 
 
-There seems to be stark inequality, as for both per-capita and total household income in the last 30 days, the median is almost half of the mean, suggesting a right skewed distribution.
+There is large variation and inequality in household income and per-capita income - in both cases the mean is almost twice the median, suggesting a right skewed distribution.
 
-
-There are large outliers, as seen in the 99th percentile and max values.
+Indeed, there are extreme outliers, with maximum values exceeding the 99th percentile at large orders of magnitude. Similar patterns hold for both formal and informal borrowing.
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/figure01_hhinc.png}
-    \caption{: Distribution and Composition of Household Income in last 30 days}
+    \caption{: Distribution and composition of household income in last 30 days}
 \end{figure}
 
+Panel A visually confirms the skewed distribution even excluding the top percentile.
 
+Panel B illustrates that while household income was positively correlated with household size, per-capita income was negatively correlated with household size.
 
 
 \begin{figure}[H]
@@ -66,9 +70,59 @@ There are large outliers, as seen in the 99th percentile and max values.
     \caption{: Distribution of total borrowing (loans) in last 24 months}
 \end{figure}
 
+Here we can see that informal borrowing is much more common
+
+
+\subsection{part f}
+
+top code so that upper end of the distribution is censored
+
+large outliers skew stuff
+might be measurement error or self reported bias or recall bias
+
+check for extreme debt to income ratios 
+
+
+\subsection{part j}
+
+strengths of the dummy
+- per-capita
+
+
+weaknesses of the dummy
+- ask about expenses to build local poverty line, perhaps nutrition based
 
 
 
+\subsection{part k}
+
+probably drop all unmatched ones
+
+
+\section{part 2: analysis}
+
+\subsection{part a}
+
+testable hypothesis about impacts of the program on an outcome or subgroup
+
+Early expansion of banks increased total formal borrowing among sc/st households less than other households
+
+\subsection{part b}
+
+Why did you choose these particular variables to test?
+
+What are the results of the test, and what can they tell us about the validity of the
+experiment?
+
+
+- social groups: stark inequality in institutional access/ awareness
+- gender of hoh: migration patterns differ by village
+- age of hoh: joint household status may differ by village
+- education: none, primary, secondary, higher (collapse years of education into categorical variables)
+- literacy: attainment vs attendance
+- no. household members
+- no. hh members above 18 years
+- no. hh members below 18 years
 
 \section{References used}
 
