@@ -46,20 +46,21 @@ foreach var in hhinc totformalborrow_24 totinformalborrow_24 {
 
 * --------- part c --------- 
 
-
-* create a variable for household income per capita 
+* for endline raw data analysis, create a variable for household income per capita 
 gen hhinc_pc = hhinc/hhnomembers
 
+* create a variable for daily household income per capita to benchmark to intl. poverty lines
 gen hhinc_pc_daily = hhinc_pc/30
 
+* create a variable for income net debt estimate (income in last 24 months estimated by hhinc in last 30 days * 24)
 gen income_net_debt = hhinc*24 - (totformalborrow_24+totinformalborrow_24)
 
-
-do "part c.do"
-
+* 1 table and 2 multi panel figures
+do "dofiles/endline raw data analysis (part 1c).do"
 
 * --------- part d and e ---------
 
+* top code to 3 sd above mean
 foreach var in hhinc totformalborrow_24 totinformalborrow_24 {
 	
 	qui sum `var'
@@ -113,7 +114,6 @@ gen bpl = hhinc_pc_topcoded/30 < 26.995
 
 
 * --------- part k --------- 
-
 
 
 merge 1:1 hhid using "${provided_data}/baseline_controls.dta"

@@ -8,29 +8,10 @@ use final_dataset.dta, clear
 
 * --------- part b --------- 
 
+* balance table
 eststo clear
 
 estpost ttest gender_hoh age_hoh readwrite_hoh noclasspassed_hoh primaryeduc_hoh secondaryeduc_hoh higheduc_hoh hhnomembers_above18 hhnomembers_below18 hhreg_muslim-hhcaste_sc_st, by(treated)
-
-#delimit ; 
-esttab ,
-	replace
-	star(* 0.1 ** 0.05 *** 0.01)
-	cells("mu_1(fmt(3)) mu_2(fmt(3)) b(star) se(par)")
-	nonumber
-	label
-	refcat(gender_hoh "\textbf{Demographics of head of household}"
-		   readwrite_hoh "\textbf{Highest education level of head of household}"
-		   hhnomembers_above18 "\textbf{Household size and composition}"
-		   hhreg_muslim "\textbf{Religion and caste/tribe of household}", nolabel)
-	collabels("Control" "Treated" "Difference" "SE" "N")
-	coeflabels(age_hoh "Age" gender_hoh "Male"
-			   readwrite_hoh "Able to read and write"
-			   noclasspassed_hoh "No formal education"
-			   primaryeduc_hoh "Primary (classes 1-5)"
-			   secondaryeduc_hoh "Secondary (classes 8-13)"
-			   higheduc_hoh "Graduate/postgraduate/vocational/industrial");
-
 
 #delimit ; 
 esttab using "tables/table02_balance.tex",
@@ -55,18 +36,6 @@ esttab using "tables/table02_balance.tex",
 			   
 
 			   
-/*
-
-
-Regress (with OLS) the household income on the treatment dummy. Include pair fixed
-effects, and correct standard errors if necessary.
-i. Explain why you think it might be appropriate to use a fixed effects specification in
-this case, and how you would interpret the effect of the treatment on household
-income in this case. Interpret your results.
-ii. Briefly justify your choice of standard errors.
-
-
-*/
 
 
 eststo clear
@@ -74,13 +43,15 @@ eststo clear
 
 * --------- part c --------- 
 
+* level level regression
+
 reghdfe hhinc_topcoded i.treated, absorb(pair_id) cluster(group_id)
 eststo base
 
 
 * --------- part d --------- 
 
-
+* log level regression 
 gen log_hhinc_topcoded = log(hhinc_topcoded)
 
 
@@ -92,7 +63,7 @@ eststo log_outcome
 
 * --------- part e --------- 
 
-
+* log level regressoin with controls
 #delimit ;
 reghdfe log_hhinc_topcoded i.treated
 		i.gender_hoh
@@ -171,24 +142,24 @@ twoway bar mean income_quartile if treated==1 ||
 	   legend(off)
 	   xlabel(, valuelabel nogrid)
 	   title("Treated group")
-	   ytitle("Average total borrowed")
+	   ytitle("Average total borrowed (₹)")
 	   name(treated, replace)
-	   text( `treated_outcometxt1' 1.25  "`=string(`treated_outcometxt1', "%15.0fc")' Rs.", size(small))
-	   text( `treated_outcometxt2' 2.25  "`=string(`treated_outcometxt2', "%15.0fc")' Rs.", size(small))
-	   text( `treated_outcometxt3' 3.25  "`=string(`treated_outcometxt3', "%15.0fc")' Rs.", size(small))
-	   text( `treated_outcometxt4' 4.25  "`=string(`treated_outcometxt4', "%15.0fc")' Rs.", size(small));
+	   text( `treated_outcometxt1' 1.25  "`=string(`treated_outcometxt1', "%15.0fc")'₹", size(small))
+	   text( `treated_outcometxt2' 2.25  "`=string(`treated_outcometxt2', "%15.0fc")'₹", size(small))
+	   text( `treated_outcometxt3' 3.25  "`=string(`treated_outcometxt3', "%15.0fc")'₹", size(small))
+	   text( `treated_outcometxt4' 4.25  "`=string(`treated_outcometxt4', "%15.0fc")'₹", size(small));
 
 twoway bar mean income_quartile if treated==0 || rcap lb ub income_quartile if treated==0  ||
 	(scatter mean income_quartile if treated==0, mcolor(red)), 
 	legend(off)
 	xlabel(, valuelabel nogrid)
 	title("Control group")
-	ytitle("Average total borrowed")
+	ytitle("Average total borrowed (₹)")
 	name(control, replace)
-	text( `control_outcometxt1' 1.4  "`=string(`control_outcometxt1', "%15.0fc")' Rs.", size(small))
-    text( `control_outcometxt2' 2.4 "`=string(`control_outcometxt2', "%15.0fc")' Rs.", size(small))
-    text( `control_outcometxt3' 3.4  "`=string(`control_outcometxt3', "%15.0fc")' Rs.", size(small))
-    text( `control_outcometxt4' 4.  "`=string(`control_outcometxt4', "%15.0fc")' Rs.", size(small));
+	text( `control_outcometxt1' 1.25  "`=string(`control_outcometxt1', "%15.0fc")'₹", size(small))
+    text( `control_outcometxt2' 2.25 "`=string(`control_outcometxt2', "%15.0fc")'₹", size(small))
+    text( `control_outcometxt3' 3.25  "`=string(`control_outcometxt3', "%15.0fc")'₹", size(small))
+    text( `control_outcometxt4' 4.25  "`=string(`control_outcometxt4', "%15.0fc")'₹", size(small));
 #delimit cr
 
 
