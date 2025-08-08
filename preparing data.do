@@ -55,7 +55,7 @@ gen hhinc_pc_daily = hhinc_pc/30
 gen income_net_debt = hhinc*24 - (totformalborrow_24+totinformalborrow_24)
 
 
-do "partc.do"
+do "part c.do"
 
 
 * --------- part d and e ---------
@@ -151,10 +151,10 @@ replace educ_cat = 2 if secondaryeduc_hoh==1
 replace educ_cat = 3 if higheduc_hoh==1
 
 label define educlbl ///
-    1 "No formal education" ///
-    2 "Primary education (highest)" ///
-    3 "Secondary education (highest)" ///
-    4 "Graduate/vocational/industrial education" 
+    0 "No formal education" ///
+    1 "Primary education (highest)" ///
+    2 "Secondary education (highest)" ///
+    3 "Graduate/vocational/industrial education" 
 label values educ_cat educlbl
 
 gen caste = 1 if hhcaste_fc==1
@@ -169,6 +169,12 @@ label define castelbl ///
     4 "Scheduled caste/tribe" 
 label values caste castelbl
 
+
+label define treatedlbl ///
+	1 "Treated" ///
+	0 "Control" 
+	
+label values treated treatedlbl
 
 
 save final_dataset.dta, replace
