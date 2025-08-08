@@ -46,7 +46,8 @@
 \end{table}
 
 
-The average per-capita income for households in the sample is \$1.02 a day, which is well below the international extreme poverty threshold. 
+The average per-capita income for households in the sample is \$6.29 a day (using the provided exchange rate).
+
 
 There is large variation and inequality in household income and per-capita income - in both cases the mean is almost twice the median, suggesting a right skewed distribution.
 
@@ -116,14 +117,6 @@ What are the results of the test, and what can they tell us about the validity o
 experiment?
 
 
-- social groups: stark inequality in institutional access/ awareness
-- gender of hoh: migration patterns differ by village
-- age of hoh: joint household status may differ by village
-- education: none, primary, secondary, higher (collapse years of education into categorical variables)
-- literacy: attainment vs attendance
-- no. household members
-- no. hh members above 18 years
-- no. hh members below 18 years
 
 
 \begin{table}[H]
@@ -134,6 +127,20 @@ experiment?
     \resizebox{\textwidth}{!}{\input{tables/table02_balance}}
     \caption{: Endline raw data summary statistics}
 \end{table}
+
+
+I chose to balance test the following variables because they might vary systematically by village, which is the unit of treatment assignment. If treatment assignment isn't effectively random, then the effect of local bank branches opening might be confounded with these variables. 
+
+\begin{itemize}
+    \item household head's gender, for instance, may be dependent on male/female preferring migration patterns that vary by village.
+
+    \item household head's age, for instance, may be dependent on household structure norms that vary by village - if some communities remain in joint households after marriage, then household heads would likely be older. 
+
+    \item similarly, the household size and composition variables may be correlated with structure norms that differ systematically by village.
+    
+    \item Indian villages often differ by social group composition, some may be mixed caste and religion, others may be more homogenous. Caste and religion, both individually and in village composition, is a strong determinant of health and socioeconomic outcomes in India.
+    
+\end{itemize}
 
 
 \section{References used}
