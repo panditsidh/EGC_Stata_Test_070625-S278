@@ -26,15 +26,16 @@
 \usepackage{titlesec}
 
 \title{EGC Stata Test 070625 S278}
-\author{Sidh Pandit}
-\date{August 2025}
+\date{August 7th, 2025}
 
 \begin{document}
 
 \maketitle
 
 
-\subsection{part c}
+\section*{Data preparation and preliminary analysis}
+
+\subsection*{Part 1c)}
 
 \begin{table}[H]
     \centering
@@ -76,50 +77,37 @@ Panel A in figure 2 shows the distribution of the estimate of income net debt, f
 Panel B in figure 2 shows that informal borrowing is far more common among the sample in smaller amounts, below around 18,000 Rs. over the last 24 months. Both distributions, like household income, are heavily skewed right. 
 
 
-\subsection{part f}
+\subsection*{Part 1f)}
 
-top code so that upper end of the distribution is censored
+Top-coding household income and total borrowing in the last 24 months helps reduce the influence of extreme outliers that can distort summary statistics and regression estimates. In this sample, the means of these variables dropped significantly after top-coding, suggesting that the original averages were disproportionately driven by a small number of very high-income or high-debt households. Top-coding makes the analysis more representative of the broader population by limiting the influence of such extreme values.
 
-large outliers skew stuff
-might be measurement error or self reported bias or recall bias
+Also, since this data is from self-reported surveys, there could be bias where people report larger incomes or borrowing than their true values for social desirability. 
 
-check for extreme debt to income ratios 
+Another check would be to look for instances of households having zero income with positive borrowing. This could be due to missing information or data entry errors that make these points invalid for analysis. 
 
+\subsection*{Part 1j)}
 
-\subsection{part j}
+One strength of the dummy variable for poverty (indicating households that are belowa per-capita poverty line of 26.995 INR) is that it's based on per-capita income. As we saw in figure 1 panel B, high household incomes may mask per-capita deprivation because they're correlated with a larger household size.
 
-strengths of the dummy
-- per-capita
-
-
-weaknesses of the dummy
-- ask about expenses to build local poverty line, perhaps nutrition based
+A limitation is how per-capita income is calculated, assuming that income is divided evenly among all members of a household. In rural India nutrition, access to healthcare, financial independence, and many other resources and freedoms within the household are often allocated disproportionately away from women, which this measure fails to capture.
 
 
+\subsection*{Part 1k)}
 
-\subsection{part k}
+The households that had baseline data but not endline data are never assigned treatment or control in "treatment\_status.csv" (the "treated" variable is missing). Data on these households may have been collected for better understanding the local context but weren't part of the experiment. Thus, they can be dropped from the final dataset.
 
-drop all baseline only - not even part of experiment
-
-endline only not significantly different by treated or control
-
-\section{part 2: analysis}
-
-\subsection{part a}
-
-testable hypothesis about impacts of the program on an outcome or subgroup
-
-Early expansion of banks increased total formal borrowing among sc/st households less than other households
-
-\subsection{part b}
-
-Why did you choose these particular variables to test?
-
-What are the results of the test, and what can they tell us about the validity of the
-experiment?
+On the other hand, households that had endline data but not baseline data must not be systematically correlated with treatment, otherwise our estimates of treatment effects could be biased due to this differential attrition. However, a t-test on the difference across treatment status of a dummy variable indicating having endline but not baseline data was not significant. Thus, these instances can be dropped without introducing bias. 
 
 
+\section*{Part 2: Analysis}
 
+\subsection*{Part 1a)}
+
+Testable hypothesis: Early expansion of banks increased total formal borrowing among SC/ST households less than other households. 
+
+My prior is as such because SC/ST households are often excluded from access to formal credit, may lack awareness of new financial services, or may feel unwelcome when interacting with formal institutions. 
+
+\subsection*{Part 1b)}
 
 \begin{table}[H]
     \centering
@@ -143,6 +131,42 @@ I chose to balance test the following variables because they might vary systemat
     \item Indian villages often differ by social group composition, some may be mixed caste and religion, others may be more homogenous. Caste and religion, both individually and in village composition, is a strong determinant of health and socioeconomic outcomes in India.
     
 \end{itemize}
+
+The results of the balance test suggest that the composition of caste and religion are not fully balanced across treatment and control villages. Most notably, the proportion of Most Backwards Caste households in treatment villages is an estimated 4.6 percentage points higher in treatment villages, whereas the proportion of Backwards Caste households in control villages is an estimated 4.5 percentage points higher than in control villages, both significant at the 1\% level. This raises concerns that differences in social composition could confound the treatment effects of the bank branch opening. Although these imbalances are both practically and statistically significant, they could arise by chance and don't suggest that social group composition of villages is systematically correlated with treatment assignment. Thus the experiment is valid with appropriate controls in analysis to preserve internal validity.
+
+The other statistically significant differences in number of household members below 18 years old and proportion of household heads with higher education are very small in magnitude and unlikely to confound treatment effects. 
+
+\subsection*{Part 1c)}
+
+Regress (with OLS) the household income on the treatment dummy. Include pair fixed
+effects, and correct standard errors if necessary.
+i. Explain why you think it might be appropriate to use a fixed effects specification in
+this case, and how you would interpret the effect of the treatment on household
+income in this case. Interpret your results.
+ii. Briefly justify your choice of standard errors.
+
+
+
+
+Treatment is randomized within service area pairs, which may vary from each other on unobservable characteristics. For instance, if pairs are of service areas that are geographically close to one another, service areas may vary across pairs on characteristics that influence household income and borrowing such as access to public infrastructure or agricultural performance. 
+
+Thus, treatment effects are isolated from within-pair comparisons between treatment and control service areas, which is made possible by pair level fixed effects that normalize all pairs on unobservable characteristics.
+
+I chose to cluster standard errors at the service area level because this is the unit of treatment - people within villages may respond similarly to the opening of a bank branch due to village level characteristics. For instance, awareness about the bank branch and how to utilize it may spread more slowly in mixed-caste villages as opposed to more homogeneous villages due to greater social fragmentation. Thus, standard errors would be correlated within villages, making clustering at the village level as opposed to treating households as fully independent important for getting accurate standard errors.
+
+
+
+\begin{table}[H]
+    \centering
+    \scriptsize % shrink text
+    \setlength{\tabcolsep}{2pt}
+    \renewcommand{\arraystretch}{2}
+    \resizebox{\textwidth}{!}{\input{tables/table}}
+    \caption{: Endline raw data summary statistics}
+\end{table}
+
+
+
 
 
 \section{References used}
