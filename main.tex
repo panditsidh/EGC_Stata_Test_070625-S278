@@ -138,21 +138,20 @@ The other statistically significant differences in number of household members b
 
 \subsection*{Part 1c)}
 
-Regress (with OLS) the household income on the treatment dummy. Include pair fixed
-effects, and correct standard errors if necessary.
-i. Explain why you think it might be appropriate to use a fixed effects specification in
-this case, and how you would interpret the effect of the treatment on household
-income in this case. Interpret your results.
-ii. Briefly justify your choice of standard errors.
-
-
-
-
 Treatment is randomized within service area pairs, which may vary from each other on unobservable characteristics. For instance, if pairs are of service areas that are geographically close to one another, service areas may vary across pairs on characteristics that influence household income and borrowing such as access to public infrastructure or agricultural performance. 
 
 Thus, treatment effects are isolated from within-pair comparisons between treatment and control service areas, which is made possible by pair level fixed effects that normalize all pairs on unobservable characteristics.
 
 I chose to cluster standard errors at the service area level because this is the unit of treatment - people within villages may respond similarly to the opening of a bank branch due to village level characteristics. For instance, awareness about the bank branch and how to utilize it may spread more slowly in mixed-caste villages as opposed to more homogeneous villages due to greater social fragmentation. Thus, standard errors would be correlated within villages, making clustering at the village level as opposed to treating households as fully independent important for getting accurate standard errors.
+
+\subsection*{Part 1c)}
+
+In the regression model with household income as the dependent variable, the coefficient on "treated" is interpreted as the difference in household income between the treated and control group. Column 1 of table 3 suggests that treated villages had, on average, incomes of 500.8 Rs. higher than control villages, though this is not statistically significant at the 10\ level.
+
+In the regression model with log household income as the dependent variable, the coefficient on "treated" is interpreted as the approximate percent change in household income between the treated and control group. Column 1 of table 3 suggests that treated villages had, on average, 5.82\% higher incomes than control villages, though this is not statistically significant at the 10\% level.
+
+\subsection*{Part 1e)}
+
 
 
 
@@ -160,9 +159,9 @@ I chose to cluster standard errors at the service area level because this is the
     \centering
     \scriptsize % shrink text
     \setlength{\tabcolsep}{2pt}
-    \renewcommand{\arraystretch}{2}
-    \resizebox{\textwidth}{!}{\input{tables/table}}
-    \caption{: Endline raw data summary statistics}
+    \renewcommand{\arraystretch}{1}
+    \resizebox{\textwidth}{!}{\input{tables/table03_regression}}
+    \caption{: Regression}
 \end{table}
 
 
