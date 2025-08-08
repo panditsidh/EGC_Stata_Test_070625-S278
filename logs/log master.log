@@ -1,0 +1,847 @@
+---------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/sidhpandit/Documents/GitHub/EGC_Stata_Test_070625-S278/log master.log
+  log type:  text
+ opened on:   8 Aug 2025, 13:14:48
+
+. 
+. 
+. 
+. 
+. do "dofiles/preparing data (part 1).do"
+
+. * To run on your machine, please customize this
+. 
+. if "`c(username)'" == "sidhpandit" {
+.         
+.         * please change this to your path to "EGC_Stata_Test_2022" (the starting materials)
+.         global provided_data "/Users/sidhpandit/Documents/GitHub/EGC_Stata_Test_070625-S278/EGC_Stata_Test_2022"
+.         
+.         * please change this to your path to "EGC_Stata_Test_070625-S278" (my project folder)
+.         cd "/Users/sidhpandit/Documents/GitHub/EGC_Stata_Test_070625-S278" 
+/Users/sidhpandit/Documents/GitHub/EGC_Stata_Test_070625-S278
+.         
+. 
+. }
+
+. 
+. ******************************** DATA PREPARATION ********************************
+. 
+. 
+. 
+. * --------- part a ---------
+. 
+. use "${provided_data}/endline.dta", clear
+
+.  
+. * --------- part b ---------
+.  
+.  
+. ** check what the non-numeric values are before recoding
+. // tab hhinc
+. // tab totformalborrow_24
+. // tab totinformalborrow_24
+. 
+.  
+. foreach var in hhinc totformalborrow_24 totinformalborrow_24 {
+  2.         
+.         rename `var' `var'_str // save the original variable in case we need to come back to it
+  3.         gen `var' = `var'_str
+  4.         
+.         replace `var' = "0" if `var'=="None"
+  5.         
+.         replace `var' = "" if `var'=="Refuse to answer" // handle this case as missing
+  6.         
+.         destring(`var'), replace
+  7.         
+.                 
+. }
+(244 real changes made)
+(4 real changes made)
+hhinc: all characters numeric; replaced as long
+(4 missing values generated)
+(1,221 real changes made)
+(0 real changes made)
+totformalborrow_24: all characters numeric; replaced as long
+(4 missing values generated)
+(1,539 real changes made)
+(0 real changes made)
+totinformalborrow_24: all characters numeric; replaced as long
+(4 missing values generated)
+
+. 
+. 
+. 
+. * --------- part c --------- 
+. 
+. * for endline raw data analysis, create a variable for household income per capita 
+. gen hhinc_pc = hhinc/hhnomembers
+(4 missing values generated)
+
+. 
+. * create a variable for daily household income per capita to benchmark to intl. poverty lines
+. gen hhinc_pc_daily = hhinc_pc/30
+(4 missing values generated)
+
+. 
+. * create a variable for income net debt estimate (income in last 24 months estimated by hhinc in last 30 days * 24)
+. gen income_net_debt = hhinc*24 - (totformalborrow_24+totinformalborrow_24)
+(8 missing values generated)
+
+. 
+. * 1 table and 2 multi panel figures
+. do "dofiles/endline raw data analysis (part 1c).do"
+
+. * table 1: endline raw data summary statistics
+. 
+. eststo clear
+
+. 
+. estpost tabstat hhinc totformalborrow_24 totinformalborrow_24 income_net_debt hhnomembers hhinc_pc hhinc_pc_daily, stats(mean sd p1 p
+> 50 p99 max) columns (statistics)
+
+Summary statistics: mean sd p1 p50 p99 max
+     for variables: hhinc totformalborrow_24 totinformalborrow_24 income_net_debt hhnomembers hhinc_pc hhinc_pc_daily
+
+             |   e(mean)      e(sd)      e(p1)     e(p50)     e(p99)     e(max) 
+-------------+------------------------------------------------------------------
+       hhinc |  11809.39   67460.29          0       6000      85000    4000000 
+totformal~24 |  64382.05     127493          0      30000     500000    3690000 
+totinform~24 |  40921.07   84809.68          0      10000     400000    1120000 
+income_net~t |  178316.1    1604087    -400000      76000    1813000   9.58e+07 
+ hhnomembers |  4.514423   1.855772          1          4         10         16 
+    hhinc_pc |  2682.547   8835.989          0       1460      20000     400000 
+hhinc_pc_d~y |  89.41823    294.533          0   48.66667   666.6667   13333.33 
+
+. 
+. 
+. #delimit ; 
+delimiter now ;
+. esttab, 
+>         replace
+>         cells("mean(fmt(%15.2fc)) sd(fmt(%15.2fc)) p1(fmt(%15.0fc)) p50(fmt(%15.0fc)) p99(fmt(%15.0fc)) max(fmt(%15.0fc))")
+>         collabels("Mean" "SD" "1st pctl." "Median" "99th pctl." "Max")
+>         nonumber
+>         coeflabels(hhinc "Household income in last 30 days (Rs)" 
+>                            totformalborrow_24 "Total formal loans in last 24 mo. (Rs)"
+>                            totinformalborrow_24 "Total informal loans in last 24 mo. (Rs)"
+>                            income_net_debt "24-month income estimate minus total loans (Rs)"
+>                            hhnomembers "Number of household members"
+>                            hhinc_pc "Household income per capita in last 30 days (Rs)"
+>                            hhinc_pc_daily "Daily household income per capita, last 30 days (Rs)")
+>         note("24-month income is estimated by 24*household income in last 30 days.");
+
+------------------------------------------------------------------------------------------
+                                                                                          
+                     Mean           SD    1st pctl.       Median   99th pctl.          Max
+------------------------------------------------------------------------------------------
+Household ~s    11,809.39    67,460.29            0        6,000       85,000    4,000,000
+Total.. (Rs)    64,382.05   127,492.96            0       30,000      500,000    3,690,000
+Total.. (Rs)    40,921.07    84,809.68            0       10,000      400,000    1,120,000
+24-month i~t   178,316.11 1,604,086.81     -400,000       76,000    1,813,000   95,800,000
+Number of ~s         4.51         1.86            1            4           10           16
+Household ~l     2,682.55     8,835.99            0        1,460       20,000      400,000
+Daily hous~t        89.42       294.53            0           49          667       13,333
+------------------------------------------------------------------------------------------
+N                    4160                                                                 
+------------------------------------------------------------------------------------------
+24-month income is estimated by 24*household income in last 30 days.
+
+. #delimit cr
+delimiter now cr
+. 
+. 
+. #delimit ; 
+delimiter now ;
+. esttab using "tables/table01_summary.tex", 
+>         replace
+>         cells("mean(fmt(%15.2fc)) sd(fmt(%15.2fc)) p1(fmt(%15.0fc)) p50(fmt(%15.0fc)) p99(fmt(%15.0fc)) max(fmt(%15.0fc))")
+>         collabels("Mean" "SD" "1st pctl." "Median" "99th pctl." "Max")
+>         nonumber
+>         coeflabels(hhinc "Household income in last 30 days (Rs)" 
+>                            totformalborrow_24 "Total formal loans in last 24 mo. (Rs)"
+>                            totinformalborrow_24 "Total informal loans in last 24 mo. (Rs)"
+>                            income_net_debt "24-month income estimate minus total loans (Rs)"
+>                            hhnomembers "Number of household members"
+>                            hhinc_pc "Household income per capita in last 30 days (Rs)"
+>                            hhinc_pc_daily "Daily household income per capita, last 30 days (Rs)")
+>         note("24-month income is estimated by 24*household income in last 30 days.");
+(output written to tables/table01_summary.tex)
+
+. #delimit cr
+delimiter now cr
+. 
+. 
+. 
+. * figure 1: distribution and composition of household income in last 30 days
+. 
+. preserve
+
+. 
+. * exclude top percentile
+. keep if hhinc<85000
+(46 observations deleted)
+
+. 
+. #delimit ;
+delimiter now ;
+. kdensity hhinc, 
+>         title("A: Distribution of household income")
+>         xtitle("Housheold income in last 30 days (Rs.)")
+>         ytitle("Density")
+>         name(a, replace) ;
+
+. twoway (lpoly hhinc hhnomembers, legend(label(1 "Total household income (last 30 days)")))
+>            (lpoly hhinc_pc hhnomembers, legend(label(2 "Per-capita income (last 30 days)"))),
+>            ylabel(0(2500)20000)
+>            legend(position(5) ring(1) cols(1))
+>            title("B: Household income by household size")
+>            xtitle("Number of household members")
+>            ytitle("Income in last 30 days (Rs.)")
+>            name(b, replace);
+
+. #delimit cr        
+delimiter now cr
+. 
+. restore
+
+.         
+.         
+. graph combine a b, cols(2) iscale(0.75) note("Household income in last 30 days truncated at 99th percentile  (₹85,000 Rs.) to reduce 
+> distortion from extreme outliers.")
+
+. 
+. graph export "figures/figure01_hhinc.png", as(png) replace
+file /Users/sidhpandit/Documents/GitHub/EGC_Stata_Test_070625-S278/figures/figure01_hhinc.png saved as PNG format
+
+. 
+. 
+. * figure 2:  distribution of total borrowing (loans) in last 24 months
+. 
+. * keep up to 99th percentile for income net debt and up to 95th percentile for total borrowing
+. 
+. #delimit ;
+delimiter now ;
+. twoway (kdensity totformalborrow_24 if totformalborrow_24<=250000, legend(label(1 "Total formal borrowed amount"))) 
+>        (kdensity totinformalborrow_24 if totinformalborrow_24<=200000, legend(label(2 "Total informal borrowed amount"))), 
+>        legend(cols(1) position(6))
+>        xtitle("Amount borrowed in past 24 months (Rs., truncated at )")
+>        ytitle("Density", placement(outside))
+>        note("Distributions truncated at 95th percentiles - ₹250,000 (formal) and ₹200,000 (informal)")
+>            title("B: Distribution of formal and informal borrowing")
+>        name(c, replace);
+(note:  named style outside not found in class compass2dir, default attributes used)
+
+. hist income_net_debt if income_net_debt<1813000,
+>         xtitle("24-month income estimate minus total loans (Rs)")
+>         name(d, replace)
+>         note("Distributions truncated at 99th percentile - ₹1,813,000. 24 month income estimated as 24*last 30 days income.")
+>         title("A: Distribution of income net debt estimate");
+(bin=36, start=-1955000, width=103687.78)
+
+. #delimit cr
+delimiter now cr
+. 
+. graph combine d c, cols(2) xsize(11)
+(note:  named style outside not found in class compass2dir, default attributes used)
+
+. 
+. graph export "figures/figure02_loandistribution.png", as(png) replace
+file /Users/sidhpandit/Documents/GitHub/EGC_Stata_Test_070625-S278/figures/figure02_loandistribution.png saved as PNG format
+
+. 
+end of do-file
+
+. 
+. * --------- part d and e ---------
+. 
+. * top code to 3 sd above mean
+. foreach var in hhinc totformalborrow_24 totinformalborrow_24 {
+  2.         
+.         qui sum `var'
+  3.         local top_code = r(mean)+3*r(sd)
+  4.         
+.         * create a new, labeled version of the variable
+.         gen `var'_topcoded = `var'
+  5.         
+.         replace `var'_topcoded = `top_code' if `var'>`top_code'
+  6.                 
+. }
+(4 missing values generated)
+(13 real changes made)
+(4 missing values generated)
+(59 real changes made)
+(4 missing values generated)
+(99 real changes made)
+
+. 
+. 
+. * --------- part g --------- 
+. 
+. 
+. gen total_borrowed = totformalborrow_24 + totinformalborrow_24
+(4 missing values generated)
+
+. 
+. 
+. 
+. * --------- part h --------- 
+. 
+. * pairid , groupid , treated
+. 
+. * unique and treated by groupid
+. 
+. preserve
+
+. 
+. 
+. import delimited "${provided_data}/treatment_status.csv", clear
+(encoding automatically selected: ISO-8859-1)
+(3 vars, 101 obs)
+
+.  
+. tempfile treatment_status
+
+. save `treatment_status'
+file /var/folders/tr/xr039_6d14gc3ld9ky66cxxr0000gn/T//S_23013.000005 saved as .dta format
+
+. 
+. restore
+
+.  
+. merge m:1 group_id using `treatment_status', nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                             4,160  
+    -----------------------------------------
+
+. 
+. 
+. 
+. 
+. 
+. * --------- part i --------- 
+. 
+. 
+. gen hhinc_pc_topcoded = hhinc_topcoded/hhnomembers
+
+. 
+. gen bpl = hhinc_pc_topcoded/30 < 26.995
+
+. 
+. 
+. 
+. 
+. * --------- part k --------- 
+. 
+. 
+. merge 1:1 hhid using "${provided_data}/baseline_controls.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           622
+        from master                       358  (_merge==1)
+        from using                        264  (_merge==2)
+
+    Matched                             3,802  (_merge==3)
+    -----------------------------------------
+
+. 
+. 
+. gen baseline_only = _merge==2
+
+. gen endline_only = _merge==1
+
+. 
+. 
+. // bysort treated: sum baseline_only
+. // ttest endline_only, by(treated)
+. 
+. keep if _merge==3
+(622 observations deleted)
+
+. 
+. drop _merge
+
+. 
+. 
+. 
+. 
+. 
+. * addl stuff
+. 
+. gen primaryeduc_hoh = educyears_hoh==7
+
+. label var primaryeduc_hoh "primary"
+
+. 
+. gen secondaryeduc_hoh = inrange(educyears_hoh, 8, 14)
+
+. label var secondaryeduc_hoh "Head of Household: secondary highest education level"
+
+. 
+. label var hhnomembers_below18 "No of household members \textless{}18yo"
+
+. 
+. 
+. gen educ_cat = 0 if noclasspassed_hoh==1
+(2,929 missing values generated)
+
+. replace educ_cat = 1 if primaryeduc_hoh==1
+(1,186 real changes made)
+
+. replace educ_cat = 2 if secondaryeduc_hoh==1
+(1,566 real changes made)
+
+. replace educ_cat = 3 if higheduc_hoh==1
+(177 real changes made)
+
+. 
+. label define educlbl ///
+>     0 "No formal education" ///
+>     1 "Primary education (highest)" ///
+>     2 "Secondary education (highest)" ///
+>     3 "Graduate/vocational/industrial education" 
+
+. label values educ_cat educlbl
+
+. 
+. gen caste = 1 if hhcaste_fc==1
+(3,778 missing values generated)
+
+. replace caste = 2 if hhcaste_bc==1
+(1,501 real changes made)
+
+. replace caste = 3 if hhcaste_mbc==1
+(1,288 real changes made)
+
+. replace caste = 4 if hhcaste_sc_st==1
+(987 real changes made)
+
+. 
+. label define castelbl ///
+>     1 "Forward caste" ///
+>     2 "Backward caste" ///
+>     3 "Most backward caste" ///
+>     4 "Scheduled caste/tribe" 
+
+. label values caste castelbl
+
+. 
+. 
+. label define treatedlbl ///
+>         1 "Treated" ///
+>         0 "Control" 
+
+.         
+. label values treated treatedlbl
+
+. 
+. 
+. save final_dataset.dta, replace
+file final_dataset.dta saved
+
+. 
+end of do-file
+
+. do "dofiles/analysis (part 2).do"
+
+. use final_dataset.dta, clear
+
+. 
+. 
+. 
+. ******************************** ANALYSIS ********************************
+. 
+. 
+. 
+. * --------- part b --------- 
+. 
+. * balance table
+. eststo clear
+
+. 
+. estpost ttest gender_hoh age_hoh readwrite_hoh noclasspassed_hoh primaryeduc_hoh secondaryeduc_hoh higheduc_hoh hhnomembers_above18 h
+> hnomembers_below18 hhreg_muslim-hhcaste_sc_st, by(treated)
+
+             |      e(b)   e(count)      e(se)       e(t)    e(df_t)     e(p_l)       e(p)     e(p_u)     e(N_1)    e(mu_1)     e(N_2) 
+-------------+-------------------------------------------------------------------------------------------------------------------------
+  gender_hoh |  .0156179       3802   .0144363   1.081849       3800   .8603058   .2793883   .1396942       1871   .7359701       1931 
+     age_hoh | -.6175616       3802   .4074176  -1.515795       3800   .0648271   .1296543   .9351729       1871   46.44148       1931 
+readwrite_~h | -.0036215       3802   .0157609   -.229776       3800   .4091391   .8182782   .5908609       1871   .6167825       1931 
+noclasspas~h | -.0164286       3802   .0136447  -1.204029       3800   .1143266   .2286532   .8856734       1871    .221272       1931 
+primaryedu~h |  .0130051       3802   .0150314   .8651946       3800   .8065067   .3869866   .1934933       1871   .3185462       1931 
+secondarye~h |  .0193174       3802   .0159672   1.209821       3800   .8867887   .2264227   .1132113       1871   .4216996       1931 
+higheduc_hoh | -.0158939       3802   .0068314  -2.326581       3800     .01002   .0200399     .98998       1871   .0384821       1931 
+hhnomemb~e18 |  .0374552       3802   .0449424   .8334045       3800   .7976655    .404669   .2023345       1871     3.1721       1931 
+hhnomemb~w18 |   .090013       3802   .0400502   2.247504       3800   .9876675    .024665   .0123325       1871   1.430251       1931 
+hhreg_muslim |  .0118668       3800   .0052171   2.274601       3798   .9885073   .0229854   .0114927       1871   .0326029       1929 
+hhreg_chri~n |  .0220497       3800    .007047   3.128947       3798   .9991162   .0017676   .0008838       1871     .06093       1929 
+  hhcaste_fc | -.0029552       3801   .0025701  -1.149805       3799   .1251482   .2502965   .8748518       1870   .0048128       1931 
+  hhcaste_bc |  .0447833       3801   .0158472   2.825947       3799   .9976306   .0047387   .0023694       1870   .4176471       1931 
+ hhcaste_mbc | -.0459627       3801   .0153425  -2.995784       3799   .0013775   .0027551   .9986225       1870    .315508       1931 
+hhcaste_sc~t |  .0035999       3801   .0142289   .2529972       3799    .599858   .8002841    .400142       1870   .2614973       1931 
+
+             |   e(mu_2) 
+-------------+-----------
+  gender_hoh |  .7203521 
+     age_hoh |  47.05904 
+readwrite_~h |  .6204039 
+noclasspas~h |  .2377007 
+primaryedu~h |  .3055412 
+secondarye~h |  .4023822 
+higheduc_hoh |   .054376 
+hhnomemb~e18 |  3.134645 
+hhnomemb~w18 |  1.340238 
+hhreg_muslim |  .0207361 
+hhreg_chri~n |  .0388802 
+  hhcaste_fc |   .007768 
+  hhcaste_bc |  .3728638 
+ hhcaste_mbc |  .3614707 
+hhcaste_sc~t |  .2578975 
+
+. 
+. #delimit ; 
+delimiter now ;
+. esttab using "tables/table02_balance.tex",
+>         replace
+>         star(* 0.1 ** 0.05 *** 0.01)
+>         cells("mu_1(fmt(3)) mu_2(fmt(3)) b(star) se(par)")
+>         nonumber
+>         label
+>         refcat(gender_hoh "\textbf{Demographics of head of household}"
+>                    readwrite_hoh "\textbf{Highest education level of head of household}"
+>                    hhnomembers_above18 "\textbf{Household size and composition}"
+>                    hhreg_muslim "\textbf{Religion and caste/tribe of household}", nolabel)
+>         collabels("Control" "Treated" "Difference" "SE" "N")
+>         coeflabels(age_hoh "Age" gender_hoh "Male"
+>                            readwrite_hoh "Able to read and write"
+>                            noclasspassed_hoh "No formal education"
+>                            primaryeduc_hoh "Primary (classes 1-5)"
+>                            secondaryeduc_hoh "Secondary (classes 8-13)"
+>                            higheduc_hoh "Graduate/postgraduate/vocational/industrial");
+(output written to tables/table02_balance.tex)
+
+. #delimit cr        
+delimiter now cr
+. 
+.                            
+. 
+.                            
+. 
+. 
+. eststo clear
+
+. 
+. 
+. * --------- part c --------- 
+. 
+. * level level regression
+. 
+. reghdfe hhinc_topcoded i.treated, absorb(pair_id) cluster(group_id)
+(MWFE estimator converged in 1 iterations)
+
+HDFE Linear regression                            Number of obs   =      3,802
+Absorbing 1 HDFE group                            F(   1,    100) =       1.16
+Statistics robust to heteroskedasticity           Prob > F        =     0.2844
+                                                  R-squared       =     0.0351
+                                                  Adj R-squared   =     0.0222
+                                                  Within R-sq.    =     0.0002
+Number of clusters (group_id) =        101        Root MSE        = 18660.0270
+
+                             (Std. err. adjusted for 101 clusters in group_id)
+------------------------------------------------------------------------------
+             |               Robust
+hhinc_topc~d | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     treated |
+    Treated  |   579.2304   538.2409     1.08   0.284    -488.6241    1647.085
+       _cons |   10414.97   373.2468    27.90   0.000     9674.454    11155.48
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+     pair_id |        50           0          50     |
+-----------------------------------------------------+
+
+. eststo base
+
+. 
+. 
+. * --------- part d --------- 
+. 
+. * log level regression 
+. gen log_hhinc_topcoded = log(hhinc_topcoded)
+(214 missing values generated)
+
+. 
+. 
+. reghdfe log_hhinc_topcoded i.treated, absorb(pair_id) cluster(group_id)
+(MWFE estimator converged in 1 iterations)
+
+HDFE Linear regression                            Number of obs   =      3,588
+Absorbing 1 HDFE group                            F(   1,    100) =       2.27
+Statistics robust to heteroskedasticity           Prob > F        =     0.1355
+                                                  R-squared       =     0.0530
+                                                  Adj R-squared   =     0.0396
+                                                  Within R-sq.    =     0.0006
+Number of clusters (group_id) =        101        Root MSE        =     1.0479
+
+                             (Std. err. adjusted for 101 clusters in group_id)
+------------------------------------------------------------------------------
+             |               Robust
+log_hhinc_~d | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     treated |
+    Treated  |   .0496675   .0329999     1.51   0.135    -.0158033    .1151383
+       _cons |   8.719746   .0228213   382.09   0.000     8.674469    8.765023
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+     pair_id |        50           0          50     |
+-----------------------------------------------------+
+
+. 
+. eststo log_outcome
+
+. 
+. 
+. 
+. * --------- part e --------- 
+. 
+. * log level regressoin with controls
+. #delimit ;
+delimiter now ;
+. reghdfe log_hhinc_topcoded i.treated
+>                 i.gender_hoh
+>                 c.age_hoh
+>                 i.readwrite_hoh
+>                 i.educ_cat
+>                 c.hhnomembers_above18
+>                 c.hhnomembers_below18
+>                 i.hhreg_muslim i.hhreg_christian
+>                 i.caste
+>                 , absorb(pair_id) cluster(group_id);
+(MWFE estimator converged in 1 iterations)
+
+HDFE Linear regression                            Number of obs   =      3,584
+Absorbing 1 HDFE group                            F(  14,    100) =      28.19
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.1522
+                                                  Adj R-squared   =     0.1370
+                                                  Within R-sq.    =     0.1053
+Number of clusters (group_id) =        101        Root MSE        =     0.9930
+
+                                                          (Std. err. adjusted for 101 clusters in group_id)
+-----------------------------------------------------------------------------------------------------------
+                                          |               Robust
+                       log_hhinc_topcoded | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------------------+----------------------------------------------------------------
+                                  treated |
+                                 Treated  |   .0663228   .0304603     2.18   0.032     .0058905    .1267551
+                                          |
+                               gender_hoh |
+                                Male (1)  |    .182974   .0417173     4.39   0.000      .100208      .26574
+                                  age_hoh |  -.0070926   .0017277    -4.11   0.000    -.0105204   -.0036648
+                          1.readwrite_hoh |   .1148357   .0532845     2.16   0.034     .0091208    .2205506
+                                          |
+                                 educ_cat |
+             Primary education (highest)  |   .0478615   .0510925     0.94   0.351    -.0535045    .1492275
+           Secondary education (highest)  |   .1086016   .0723284     1.50   0.136     -.034896    .2520991
+Graduate/vocational/industrial education  |   .6969345   .1035422     6.73   0.000     .4915097    .9023593
+                                          |
+                      hhnomembers_above18 |   .1584662   .0159763     9.92   0.000     .1267697    .1901627
+                      hhnomembers_below18 |    .048601   .0137294     3.54   0.001     .0213623    .0758398
+                           1.hhreg_muslim |   .1183392   .1087921     1.09   0.279    -.0975012    .3341797
+                        1.hhreg_christian |   .0623152    .074459     0.84   0.405    -.0854093    .2100396
+                                          |
+                                    caste |
+                          Backward caste  |  -.2960698    .159988    -1.85   0.067    -.6134813    .0213418
+                     Most backward caste  |  -.3483394   .1553069    -2.24   0.027    -.6564639   -.0402149
+                   Scheduled caste/tribe  |  -.4481811   .1590825    -2.82   0.006    -.7637963   -.1325659
+                                          |
+                                    _cons |   8.522702   .1913743    44.53   0.000     8.143021    8.902383
+-----------------------------------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+     pair_id |        50           0          50     |
+-----------------------------------------------------+
+
+. #delimit cr
+delimiter now cr
+. 
+. eststo with_controls
+
+. 
+. 
+. 
+. #delimit ;
+delimiter now ;
+. esttab base log_outcome with_controls using "tables/table03_regression.tex",
+>         replace
+>         label
+>         mtitles("Income (Rs.)" "Log income" "Log income (with controls)")
+>         nonumbers
+>         drop(0.gender_hoh 0.readwrite_hoh 0.educ_cat 1.caste 0.hhreg_christian 0.hhreg_muslim 0.treated)
+>         coeflabels(1.treated "Treated"
+>                            1.gender_hoh "Household head is male"
+>                            age_hoh "Age of household head"
+>                            1.readwrite_hoh "Household head can read and write"
+>                            1.educ_cat "Primary"
+>                            2.educ_cat "Secondary"
+>                            3.educ_cat "Higher"
+>                            2.caste "Backward caste"
+>                            3.caste "Most backward caste"
+>                            4.caste "Scheduled caste/tribe"
+>                            1.hhreg_christian "Christian household"
+>                            1.hhreg_muslim "Muslim household")
+> 
+>         refcat(1.gender_hoh "\textbf{Household head characteristics}"
+>                    1.educ_cat "\textbf{Highest education of head of household} \\ (no formal education omitted)"
+>                    hhnomembers_above18 "\textbf{Household characteristics}"
+>                    2.caste "\textbf{Household caste} \\ (Forward caste omitted)", nolabel);
+(output written to tables/table03_regression.tex)
+
+. #delimit cr
+delimiter now cr
+. 
+. 
+. 
+. 
+. 
+. * --------- part f --------- 
+. 
+. xtile income_quartile=hhinc, n(4)
+
+. label define incq_lbl 1 "Q1 (Poorest)" 2 "Q2" 3 "Q3" 4 "Q4 (Richest)"
+
+. label values income_quartile incq_lbl
+
+. label var income_quartile "Household income quartiles"
+
+. 
+. 
+. statsby, by(income_quartile treated) clear: ci mean total_borrowed
+(running ci on estimation sample)
+
+      Command: ci mean total_borrowed
+            N: r(N)
+         mean: r(mean)
+           se: r(se)
+           lb: r(lb)
+           ub: r(ub)
+        level: r(level)
+           By: income_quartile treated
+
+Statsby groups:
+........
+
+. 
+. levelsof(income_quartile), local(incq_levels)
+1 2 3 4
+
+. 
+. foreach i in `incq_levels' {
+  2.         
+.         sum mean if income_quartile==`i' & treated==1
+  3.         
+.         local treated_outcometxt`i' = r(mean)+3300
+  4.         
+.         sum mean if income_quartile==`i' & treated==0
+  5.         
+.         local control_outcometxt`i' = r(mean)+3300
+  6.         
+. }
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        mean |          1    74921.17           .   74921.17   74921.17
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        mean |          1    80759.22           .   80759.22   80759.22
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        mean |          1    81881.38           .   81881.38   81881.38
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        mean |          1    85687.02           .   85687.02   85687.02
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        mean |          1    93139.95           .   93139.95   93139.95
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        mean |          1    89466.53           .   89466.53   89466.53
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        mean |          1    159362.1           .   159362.1   159362.1
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        mean |          1      189460           .     189460     189460
+
+. 
+. #delimit ;
+delimiter now ;
+. twoway bar mean income_quartile if treated==1 || 
+>            rcap lb ub income_quartile if treated==1 ||
+>            (scatter mean income_quartile if treated==1, mcolor(red)),
+>            legend(off)
+>            xlabel(, valuelabel nogrid)
+>            title("Treated group")
+>            ytitle("Average total borrowed (₹)")
+>            name(treated, replace)
+>            text( `treated_outcometxt1' 1.25  "`=string(`treated_outcometxt1', "%15.0fc")'₹", size(small))
+>            text( `treated_outcometxt2' 2.25  "`=string(`treated_outcometxt2', "%15.0fc")'₹", size(small))
+>            text( `treated_outcometxt3' 3.25  "`=string(`treated_outcometxt3', "%15.0fc")'₹", size(small))
+>            text( `treated_outcometxt4' 4.25  "`=string(`treated_outcometxt4', "%15.0fc")'₹", size(small));
+
+. twoway bar mean income_quartile if treated==0 || rcap lb ub income_quartile if treated==0  ||
+>         (scatter mean income_quartile if treated==0, mcolor(red)), 
+>         legend(off)
+>         xlabel(, valuelabel nogrid)
+>         title("Control group")
+>         ytitle("Average total borrowed (₹)")
+>         name(control, replace)
+>         text( `control_outcometxt1' 1.25  "`=string(`control_outcometxt1', "%15.0fc")'₹", size(small))
+>     text( `control_outcometxt2' 2.25 "`=string(`control_outcometxt2', "%15.0fc")'₹", size(small))
+>     text( `control_outcometxt3' 3.25  "`=string(`control_outcometxt3', "%15.0fc")'₹", size(small))
+>     text( `control_outcometxt4' 4.25  "`=string(`control_outcometxt4', "%15.0fc")'₹", size(small));
+
+. #delimit cr
+delimiter now cr
+. 
+. 
+. graph combine treated control, ycommon xsize(9)
+
+. 
+. 
+. graph export "figures/figure03_loansbar.png", as(png) replace
+file /Users/sidhpandit/Documents/GitHub/EGC_Stata_Test_070625-S278/figures/figure03_loansbar.png saved as PNG format
+
+. 
+end of do-file
+
+. 
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/sidhpandit/Documents/GitHub/EGC_Stata_Test_070625-S278/log master.log
+  log type:  text
+ closed on:   8 Aug 2025, 13:14:55
+---------------------------------------------------------------------------------------------------------------------------------------
