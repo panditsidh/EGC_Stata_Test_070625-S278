@@ -1,0 +1,63 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{3}{c}}
+\hline\hline
+                    &\multicolumn{1}{c}{Base model}&\multicolumn{1}{c}{Log model}&\multicolumn{1}{c}{Log model with controls}\\
+\hline
+treated             &       500.8         &      0.0582         &      0.0641\sym{*}  \\
+                    &      (1.02)         &      (1.92)         &      (2.09)         \\
+[1em]
+Female (0)          &                     &                     &           0         \\
+                    &                     &                     &         (.)         \\
+[1em]
+Male (1)            &                     &                     &       0.180\sym{***}\\
+                    &                     &                     &      (4.34)         \\
+[1em]
+Head of Household: Age&                     &                     &    -0.00696\sym{***}\\
+                    &                     &                     &     (-4.00)         \\
+[1em]
+Head of Household: Able to read and write=0&                     &                     &           0         \\
+                    &                     &                     &         (.)         \\
+[1em]
+Head of Household: Able to read and write=1&                     &                     &       0.115\sym{*}  \\
+                    &                     &                     &      (2.18)         \\
+[1em]
+0                   &                     &                     &           0         \\
+                    &                     &                     &         (.)         \\
+[1em]
+No formal education &                     &                     &      0.0515         \\
+                    &                     &                     &      (1.00)         \\
+[1em]
+Primary education (highest)&                     &                     &       0.112         \\
+                    &                     &                     &      (1.55)         \\
+[1em]
+Secondary education (highest)&                     &                     &       0.708\sym{***}\\
+                    &                     &                     &      (6.81)         \\
+[1em]
+No of household members 18yo+&                     &                     &       0.159\sym{***}\\
+                    &                     &                     &      (9.89)         \\
+[1em]
+No of household members \textless{}18yo&                     &                     &      0.0494\sym{***}\\
+                    &                     &                     &      (3.57)         \\
+[1em]
+Forward caste       &                     &                     &           0         \\
+                    &                     &                     &         (.)         \\
+[1em]
+Backward caste      &                     &                     &      -0.295         \\
+                    &                     &                     &     (-1.90)         \\
+[1em]
+Most backward caste &                     &                     &      -0.361\sym{*}  \\
+                    &                     &                     &     (-2.37)         \\
+[1em]
+Scheduled caste/tribe&                     &                     &      -0.458\sym{**} \\
+                    &                     &                     &     (-2.93)         \\
+[1em]
+Constant            &     10392.0\sym{***}&       8.707\sym{***}&       8.528\sym{***}\\
+                    &     (30.27)         &    (417.38)         &     (45.24)         \\
+\hline
+Observations        &        4160         &        3916         &        3586         \\
+\hline\hline
+\multicolumn{4}{l}{\footnotesize \textit{t} statistics in parentheses}\\
+\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.05\), \sym{**} \(p<0.01\), \sym{***} \(p<0.001\)}\\
+\end{tabular}
+}

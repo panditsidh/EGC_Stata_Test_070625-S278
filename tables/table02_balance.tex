@@ -1,31 +1,30 @@
 {
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
-\begin{tabular}{l*{1}{cccc}}
+\begin{tabular}{l*{3}{cccc}}
 \hline\hline
-                    &\multicolumn{4}{c}{}                                        \\
-                    &     Control&     Treated&  Difference         &          SE\\
+                    &\multicolumn{4}{c}{hhinc\_topcoded}                          &\multicolumn{4}{c}{log\_hhinc\_topcoded}                      &\multicolumn{4}{c}{log\_hhinc\_topcoded}                      \\
+                    &     Control&     Treated&  Difference         &          SE&     Control&     Treated&  Difference         &          SE&     Control&     Treated&  Difference         &          SE\\
 \hline
-\textbf{Demographics of head of household}&            &            &                     &            \\
-Male                &       0.736&       0.720&       0.016         &     (0.014)\\
-Age                 &      46.441&      47.059&      -0.618         &     (0.407)\\
-\textbf{Highest education level of head of household}&            &            &                     &            \\
-Able to read and write&       0.617&       0.620&      -0.004         &     (0.016)\\
-No formal education &       0.221&       0.238&      -0.016         &     (0.014)\\
-Primary (classes 1-5)&       0.319&       0.306&       0.013         &     (0.015)\\
-Secondary (classes 8-13)&       0.422&       0.402&       0.019         &     (0.016)\\
-Graduate/postgraduate/vocational/industrial&       0.038&       0.054&      -0.016\sym{**} &     (0.007)\\
-\textbf{Household size and composition}&            &            &                     &            \\
-No of household members 18yo+&       3.172&       3.135&       0.037         &     (0.045)\\
-No of household members \textless{}18yo&       1.430&       1.340&       0.090\sym{**} &     (0.040)\\
-\textbf{Religion and caste/tribe of household}&            &            &                     &            \\
-Muslim              &       0.033&       0.021&       0.012\sym{**} &     (0.005)\\
-Christian           &       0.061&       0.039&       0.022\sym{***}&     (0.007)\\
-Forward Caste       &       0.005&       0.008&      -0.003         &     (0.003)\\
-Backward Caste      &       0.418&       0.373&       0.045\sym{***}&     (0.016)\\
-Most Backward Caste &       0.316&       0.361&      -0.046\sym{***}&     (0.015)\\
-Scheduled Caste and Tribe&       0.261&       0.258&       0.004         &     (0.014)\\
+treated             &            &            &     500.764         &   (493.192)&            &            &       0.058\sym{*}  &     (0.030)&            &            &       0.064\sym{**} &     (0.031)\\
+Female (0)          &            &            &                     &            &            &            &                     &            &            &            &       0.000         &         (.)\\
+Male (1)            &            &            &                     &            &            &            &                     &            &            &            &       0.180\sym{***}&     (0.041)\\
+Age                 &            &            &                     &            &            &            &                     &            &            &            &      -0.007\sym{***}&     (0.002)\\
+Head of Household: Able to read and write=0&            &            &                     &            &            &            &                     &            &            &            &       0.000         &         (.)\\
+Head of Household: Able to read and write=1&            &            &                     &            &            &            &                     &            &            &            &       0.115\sym{**} &     (0.053)\\
+0                   &            &            &                     &            &            &            &                     &            &            &            &       0.000         &         (.)\\
+No formal education &            &            &                     &            &            &            &                     &            &            &            &       0.052         &     (0.051)\\
+Primary education (highest)&            &            &                     &            &            &            &                     &            &            &            &       0.112         &     (0.072)\\
+Secondary education (highest)&            &            &                     &            &            &            &                     &            &            &            &       0.708\sym{***}&     (0.104)\\
+\textbf{Household size and composition}&            &            &                     &            &            &            &                     &            &            &            &                     &            \\
+No of household members 18yo+&            &            &                     &            &            &            &                     &            &            &            &       0.159\sym{***}&     (0.016)\\
+No of household members \textless{}18yo&            &            &                     &            &            &            &                     &            &            &            &       0.049\sym{***}&     (0.014)\\
+Forward caste       &            &            &                     &            &            &            &                     &            &            &            &       0.000         &         (.)\\
+Backward caste      &            &            &                     &            &            &            &                     &            &            &            &      -0.295\sym{*}  &     (0.156)\\
+Most backward caste &            &            &                     &            &            &            &                     &            &            &            &      -0.361\sym{**} &     (0.152)\\
+Scheduled caste/tribe&            &            &                     &            &            &            &                     &            &            &            &      -0.458\sym{***}&     (0.156)\\
+Constant            &            &            &   10391.966\sym{***}&   (343.288)&            &            &       8.707\sym{***}&     (0.021)&            &            &       8.528\sym{***}&     (0.189)\\
 \hline
-Observations        &        3802&            &                     &            \\
+Observations        &        4160&            &                     &            &        3916&            &                     &            &        3586&            &                     &            \\
 \hline\hline
 \end{tabular}
 }
